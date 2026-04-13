@@ -118,7 +118,7 @@ ACTIVIDADES_CONTRATACION=DESCRIPCCIÓN DE LAS ACTIVIDADES...
 
 | Variable | Obligatorio | Descripción | Ejemplo |
 |----------|:---:|-------------|---------|
-| `GITLAB_TOKEN` | ✅ | Token personal de GitLab | `glpat-1k9s94L...` |
+| `GITLAB_TOKEN` | ✅ | Token personal de GitLab | `glpat-12345...` |
 | `GITLAB_AUTHOR_ID` | ✅ | Tu ID en GitLab | `155` |
 | `REPORT_YEAR` | ✅ | Año del reporte | `2026` |
 | `REPORT_START_MONTH` | ✅ | Mes inicial (1-12) | `1` |
