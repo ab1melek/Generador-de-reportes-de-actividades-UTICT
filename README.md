@@ -2,87 +2,170 @@
 
 Herramienta para generar reportes de actividades en formato Word (.docx) a partir de Merge Requests de GitLab.
 
+## Inicio Rápido (⚡ 3 pasos)
+
+Si ya bajaste el repositorio, solo necesitas:
+
+```bash
+# Paso 1: Entra a la carpeta
+cd reportes
+
+# Paso 2: Activa el entorno virtual Python (ya está incluido)
+source .venv/bin/activate
+
+# Paso 3: ¡Ejecuta el script!
+python3 reporte_mr.py
+```
+
+**¡Listo!** Los reportes `.docx` aparecerán en la carpeta actual.
+
+> **⚠️ IMPORTANTE:** Debes configurar el archivo `.env` primero (ver sección "Configuración" más abajo)
+
 ## Requisitos previos
 
-- Python 3.12+
-- pip o gestor de paquetes Python
-- Token de acceso a GitLab
+- **Python 3.12+** (revisa con `python3 --version`)
+- **Token de acceso a GitLab**
 
-## Instalación
+## Instalación Completa
 
-1. Clona o descarga este repositorio
-2. Instala las dependencias:
+Si es la primera vez o necesitas reinstalar:
+
+### Paso 1: Clonar o descargar el repositorio
+
+```bash
+# OPCIÓN A: Clonar con Git
+git clone <url-del-repo>
+cd reportes
+
+# OPCIÓN B: Descargar como ZIP
+# 1. Descarga el ZIP desde GitHub
+# 2. Descomprime la carpeta
+# 3. Abre terminal y entra en la carpeta: cd reportes
+```
+
+### Paso 2: Activar el entorno virtual (SIEMPRE es necesario)
+
+El entorno virtual `.venv` está incluido en el repositorio. Solo necesitas **activarlo cada vez que uses el script**:
+
+```bash
+# En macOS o Linux:
+source .venv/bin/activate
+
+# En Windows:
+.venv\Scripts\activate
+```
+
+Si ves `(.venv)` al inicio de tu terminal, ¡está activado! 
+
+Ejemplo:
+```
+(.venv) usuario@PC reportes %
+```
+
+### Paso 3: Instalar dependencias (solo la primera vez)
+
+Una vez activado el entorno virtual:
 
 ```bash
 pip install -r requirements.txt
 ```
 
+Esto instala:
+- `requests` - para conectar con GitLab
+- `python-docx` - para generar documentos Word
+- `python-dotenv` - para leer variables de entorno
+
 ## Configuración
 
-### 1. Configurar variables de entorno
+### 1️⃣ Configurar variables de entorno (.env)
 
-Copia el archivo `.env.example` a `.env` y rellena los valores:
+**ANTES de ejecutar el script**, debes configurar tus datos:
+
+#### Paso A: Copia el archivo de ejemplo
 
 ```bash
 cp .env.example .env
 ```
 
-Edita `.env` con tus valores:
+#### Paso B: Edita `.env` con tus valores
+
+Abre `.env` en tu editor de texto favorito y rellena:
 
 ```env
-GITLAB_TOKEN=tu_token_aqui
-GITLAB_AUTHOR_ID=tu_id_de_autor
+# Tu token de acceso personal de GitLab
+GITLAB_TOKEN=glpat-tu_token_aqui
+
+# Tu ID de usuario en GitLab (ej: 155)
+GITLAB_AUTHOR_ID=155
+
+# Año para el reporte
 REPORT_YEAR=2026
+
+# Mes inicial (1=enero, 12=diciembre)
 REPORT_START_MONTH=1
+
+# Mes final (si es igual al inicio, genera solo 1 mes)
 REPORT_END_MONTH=3
+
+# Tu nombre completo
 USER_NAME=Tu Nombre Completo
-ACTIVIDADES_CONTRATACION=Descripción de tus actividades de contratación
+
+# Descripción de tus actividades (puedes copiar del documento anterior)
+ACTIVIDADES_CONTRATACION=DESCRIPCCIÓN DE LAS ACTIVIDADES...
 ```
 
-### Variables disponibles
+#### Tabla de variables
 
-| Variable | Descripción | Ejemplo |
-|----------|-------------|---------|
-| `GITLAB_TOKEN` | Token de acceso personal a GitLab | `glpat-xxxxx...` |
-| `GITLAB_AUTHOR_ID` | ID del autor de los MR | `123` |
-| `REPORT_YEAR` | Año del reporte | `2026` |
-| `REPORT_START_MONTH` | Mes inicial (1-12) | `1` |
-| `REPORT_END_MONTH` | Mes final (1-12) | `3` |
-| `USER_NAME` | Tu nombre completo | 
-| `ACTIVIDADES_CONTRATACION` | Descripción de actividades | Texto libre |
+| Variable | Obligatorio | Descripción | Ejemplo |
+|----------|:---:|-------------|---------|
+| `GITLAB_TOKEN` | ✅ | Token personal de GitLab | `glpat-1k9s94L...` |
+| `GITLAB_AUTHOR_ID` | ✅ | Tu ID en GitLab | `155` |
+| `REPORT_YEAR` | ✅ | Año del reporte | `2026` |
+| `REPORT_START_MONTH` | ✅ | Mes inicial (1-12) | `1` |
+| `REPORT_END_MONTH` | ✅ | Mes final (1-12) | `3` |
+| `USER_NAME` | ✅ | Tu nombre completo | `Juan Pérez` |
+| `ACTIVIDADES_CONTRATACION` | ✅ | Descripción de actividades | Texto libre |
 
-### 2. Agregar archivos de imagen (opcional)
+### 2️⃣ Agregar tu firma (opcional)
 
-Coloca los siguientes archivos en la carpeta raíz si deseas incluirlos:
+Si quieres que aparezca tu firma digital en el reporte:
 
-- **`header.png`**: Imagen del encabezado del documento (ancho recomendado: 6.7 pulgadas)
-- **`firma.png`**: Tu firma digital (sin fondo - usa `make_signature_transparent.py` para remover el fondo)
+1. Coloca un archivo `firma.png` en la carpeta raíz
+2. Debe estar sin fondo (fondo transparente)
 
-### 3. Preparar tu firma (si tienes)
+### 3️⃣ Agregar el encabezado (opcional)
 
-Si tu archivo `firma.png` tiene fondo blanco que deseas remover:
+Si quieres un encabezado personalizado:
 
-1. Coloca `firma.png` en la carpeta raíz
-2. Ejecuta (Python 3.9+):
-   ```bash
-   python3 -c "from PIL import Image; img = Image.open('firma.png').convert('RGBA'); pixels = [(255, 255, 255, 0) if r > 240 and g > 240 and b > 240 else (r, g, b, a) for r, g, b, a in img.getdata()]; img.putdata(pixels); img.save('firma.png')"
-   ```
+1. Coloca un archivo `header.png` en la carpeta raíz  
+2. Ancho recomendado: 6.7 pulgadas
 
-## Uso
+## Uso Diario
 
-Ejecuta el script:
+Cada vez que quieras generar nuevos reportes:
 
 ```bash
+# 1. Abre terminal en la carpeta del proyecto
+cd reportes
+
+# 2. Activa el entorno virtual
+source .venv/bin/activate
+
+# 3. (OPCIONAL) Edita .env si cambió algo
+
+# 4. ¡Ejecuta!
 python3 reporte_mr.py
 ```
 
-El script generará un archivo `.docx` por cada mes en el rango especificado. Los archivos se guardarán en tu carpeta `Downloads`:
+Los archivos `.docx` aparecerán en la **carpeta actual**:
 
 ```
-~/Downloads/reporte_enero.docx
-~/Downloads/reporte_febrero.docx
-~/Downloads/reporte_marzo.docx
+reporte_enero.docx
+reporte_febrero.docx
+reporte_marzo.docx
 ```
+
+Ejemplo: El script genera un reporte por cada mes en el rango que especificaste en `.env`.
 
 ## Estructura del documento generado
 

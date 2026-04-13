@@ -79,7 +79,7 @@ HEADERS = {"PRIVATE-TOKEN": TOKEN}
 SCRIPT_DIR = Path(__file__).resolve().parent
 HEADER_PATH = SCRIPT_DIR / "header.png"
 SIGNATURE_PATH = SCRIPT_DIR / "firma.png"
-DOWNLOADS_DIR = Path.home() / "Downloads"
+OUTPUT_DIR = Path.cwd()
 
 
 # =========================================================
@@ -245,8 +245,8 @@ def create_monthly_report(month: int, mrs: list[dict], project_cache: dict[int, 
     month_name = MONTH_NAMES[month]
     last_day = calendar.monthrange(2026, month)[1]
 
-    DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = DOWNLOADS_DIR / f"reporte_{month_name}.docx"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = OUTPUT_DIR / f"reporte_{month_name}.docx"
 
     # Orden por fecha de creación
     mrs = sorted(mrs, key=lambda x: x["created_at"])
